@@ -30,6 +30,7 @@ import {
   LoginBlockYAML,
   WaitBlockYAML,
   FileDownloadBlockYAML,
+  GoToUrlBlockYAML,
 } from "../types/workflowYamlTypes";
 import {
   EMAIL_BLOCK_SENDER,
@@ -82,6 +83,7 @@ import { loginNodeDefaultData } from "./nodes/LoginNode/types";
 import { waitNodeDefaultData } from "./nodes/WaitNode/types";
 import { fileDownloadNodeDefaultData } from "./nodes/FileDownloadNode/types";
 import { ProxyLocation } from "@/api/types";
+import { goToUrlNodeDefaultData, isGoToUrlNode } from "./nodes/GoToUrlNode/types";
 
 export const NEW_NODE_LABEL_PREFIX = "block_";
 
@@ -192,6 +194,26 @@ function convertToNode(
           cacheActions: block.cache_actions,
           completeCriterion: block.complete_criterion ?? "",
           terminateCriterion: block.terminate_criterion ?? "",
+        },
+      };
+    }
+    case "goto_url": {
+      return {
+        ...identifiers,
+        ...common,
+        type: "goToUrl",
+        data: {
+          ...commonData,
+          url: block.url ?? "",
+          errorCodeMapping: JSON.stringify(block.error_code_mapping, null, 2),
+          allowDownloads: block.complete_on_download ?? false,
+          downloadSuffix: block.download_suffix ?? null,
+          maxRetries: block.max_retries ?? null,
+          maxStepsOverride: block.max_steps_per_run ?? null,
+          parameterKeys: block.parameters.map((p) => p.key),
+          totpIdentifier: block.totp_identifier ?? null,
+          totpVerificationUrl: block.totp_verification_url ?? null,
+          cacheActions: block.cache_actions,
         },
       };
     }
@@ -654,6 +676,17 @@ function createNode(
         },
       };
     }
+    case "goToUrl": {
+      return {
+        ...identifiers,
+        ...common,
+        type: "goToUrl",
+        data: {
+          ...goToUrlNodeDefaultData,
+          label,
+        },
+      };
+    }
     case "navigation": {
       return {
         ...identifiers,
@@ -841,6 +874,27 @@ function getWorkflowBlock(node: WorkflowBlockNode): BlockYAML {
           string
         > | null,
         parameter_keys: node.data.parameterKeys,
+      };
+    }
+    case "goToUrl": {
+      return {
+        ...base,
+        block_type: "goto_url",
+        title: node.data.label,
+        error_code_mapping: JSONParseSafe(node.data.errorCodeMapping) as Record<
+          string,
+          string
+        > | null,
+        url: node.data.url,
+        ...(node.data.maxRetries !== null && {
+          max_retries: node.data.maxRetries,
+        }),
+        complete_on_download: node.data.allowDownloads,
+        download_suffix: node.data.downloadSuffix,
+        parameter_keys: node.data.parameterKeys,
+        totp_identifier: node.data.totpIdentifier,
+        totp_verification_url: node.data.totpVerificationUrl,
+        cache_actions: node.data.cacheActions,
       };
     }
     case "action": {
@@ -1459,6 +1513,24 @@ function convertBlocksToBlockYAML(
         };
         return blockYaml;
       }
+      case "goto_url": {
+        const blockYaml: GoToUrlBlockYAML = {
+          ...base,
+          block_type: "goto_url",
+          title: block.title,
+          url: block.url,
+          error_code_mapping: block.error_code_mapping,
+          max_retries: block.max_retries,
+          max_steps_per_run: block.max_steps_per_run,
+          complete_on_download: block.complete_on_download,
+          download_suffix: block.download_suffix,
+          parameter_keys: block.parameters.map((p) => p.key),
+          totp_identifier: block.totp_identifier,
+          totp_verification_url: block.totp_verification_url,
+          cache_actions: block.cache_actions,
+        };
+        return blockYaml;
+      }
       case "validation": {
         const blockYaml: ValidationBlockYAML = {
           ...base,
@@ -1679,6 +1751,24 @@ function getWorkflowErrors(nodes: Array<AppNode>): Array<string> {
   actionNodes.forEach((node) => {
     if (node.data.navigationGoal.length === 0) {
       errors.push(`${node.data.label}: Action Instruction is required.`);
+    }
+    try {
+      JSON.parse(node.data.errorCodeMapping);
+    } catch {
+      errors.push(`${node.data.label}: Error messages is not valid JSON.`);
+    }
+  });
+
+  const goToUrlNodes = nodes.filter(isGoToUrlNode);
+  goToUrlNodes.forEach((node) => {
+    if (node.data.url.length === 0) {
+      errors.push(`${node.data.label}: URL is required.`);
+    }
+    try { 
+      return Boolean(new URL(node.data.url)); 
+    }
+    catch (e) { 
+      errors.push(`${node.data.label}: URL is invalid.`);
     }
     try {
       JSON.parse(node.data.errorCodeMapping);

@@ -7,6 +7,8 @@ import { SendEmailNode as SendEmailNodeComponent } from "./SendEmailNode/SendEma
 import type { SendEmailNode } from "./SendEmailNode/types";
 import { TaskNode as TaskNodeComponent } from "./TaskNode/TaskNode";
 import type { TaskNode } from "./TaskNode/types";
+import { GoToUrlNode as GoToUrlNodeComponent } from "./GoToUrlNode/GoToUrlNode";
+import type { GoToUrlNode } from "./GoToUrlNode/types";
 import { TextPromptNode as TextPromptNodeComponent } from "./TextPromptNode/TextPromptNode";
 import type { TextPromptNode } from "./TextPromptNode/types";
 import type { FileParserNode } from "./FileParserNode/types";
@@ -39,6 +41,7 @@ export type UtilityNode = StartNode | NodeAdderNode;
 export type WorkflowBlockNode =
   | LoopNode
   | TaskNode
+  | GoToUrlNode
   | TextPromptNode
   | SendEmailNode
   | CodeBlockNode
@@ -66,6 +69,7 @@ export type AppNode = UtilityNode | WorkflowBlockNode;
 export const nodeTypes = {
   loop: memo(LoopNodeComponent),
   task: memo(TaskNodeComponent),
+  goToUrl: memo(GoToUrlNodeComponent),
   textPrompt: memo(TextPromptNodeComponent),
   sendEmail: memo(SendEmailNodeComponent),
   codeBlock: memo(CodeBlockNodeComponent),

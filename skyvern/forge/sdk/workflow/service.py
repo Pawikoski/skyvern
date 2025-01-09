@@ -53,6 +53,7 @@ from skyvern.forge.sdk.workflow.models.block import (
     UploadToS3Block,
     ValidationBlock,
     WaitBlock,
+    UrlBlock
 )
 from skyvern.forge.sdk.workflow.models.parameter import (
     PARAMETER_TYPE,
@@ -1564,6 +1565,22 @@ class WorkflowService:
                 cache_actions=block_yaml.cache_actions,
                 complete_criterion=block_yaml.complete_criterion,
                 terminate_criterion=block_yaml.terminate_criterion,
+            )
+
+        elif block_yaml.block_type == BlockType.GOTO_URL:
+            return UrlBlock(
+                label=block_yaml.label,
+                url=block_yaml.url,
+                output_parameter=output_parameter,
+                # error_code_mapping=block_yaml.error_code_mapping,
+                # max_steps_per_run=block_yaml.max_steps_per_run,
+                # max_retries=block_yaml.max_retries,
+                continue_on_failure=block_yaml.continue_on_failure,
+                # totp_verification_url=block_yaml.totp_verification_url,
+                # totp_identifier=block_yaml.totp_identifier,
+                # cache_actions=block_yaml.cache_actions,
+                # complete_criterion=block_yaml.complete_criterion,
+                # terminate_criterion=block_yaml.terminate_criterion,
             )
 
         elif block_yaml.block_type == BlockType.WAIT:

@@ -105,6 +105,7 @@ export type Parameter =
 
 export type WorkflowBlock =
   | TaskBlock
+  | GoToUrlBlock
   | ForLoopBlock
   | TextPromptBlock
   | CodeBlock
@@ -122,6 +123,7 @@ export type WorkflowBlock =
 
 export const WorkflowBlockTypes = {
   Task: "task",
+  GoToUrl: "goto_url",
   ForLoop: "for_loop",
   Code: "code",
   TextPrompt: "text_prompt",
@@ -171,6 +173,21 @@ export type TaskBlock = WorkflowBlockBase & {
   data_schema: Record<string, unknown> | null;
   complete_criterion: string | null;
   terminate_criterion: string | null;
+  error_code_mapping: Record<string, string> | null;
+  max_retries?: number;
+  max_steps_per_run?: number | null;
+  parameters: Array<WorkflowParameter>;
+  complete_on_download?: boolean;
+  download_suffix?: string | null;
+  totp_verification_url?: string | null;
+  totp_identifier?: string | null;
+  cache_actions: boolean;
+};
+
+export type GoToUrlBlock = WorkflowBlockBase & {
+  block_type: "goto_url";
+  url: string | null;
+  title: string;
   error_code_mapping: Record<string, string> | null;
   max_retries?: number;
   max_steps_per_run?: number | null;

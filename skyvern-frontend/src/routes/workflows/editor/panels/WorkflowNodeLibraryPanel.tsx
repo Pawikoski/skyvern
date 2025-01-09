@@ -68,6 +68,17 @@ const nodeLibraryItems: Array<{
     description: "Takes actions or extracts information",
   },
   {
+    nodeType: "goToUrl",
+    icon: (
+      <WorkflowBlockIcon
+        workflowBlockType={WorkflowBlockTypes.GoToUrl}
+        className="size-6"
+      />
+    ),
+    title: "Go to URL Block",
+    description: "Navigates to specified URL",
+  },
+  {
     nodeType: "textPrompt",
     icon: (
       <WorkflowBlockIcon
@@ -101,15 +112,15 @@ const nodeLibraryItems: Array<{
     description: "Repeats nested elements",
   },
   // temporarily removed
-  // {
-  //   nodeType: "codeBlock",
-  //   icon: <WorkflowBlockIcon
-  //   workflowBlockType={WorkflowBlockTypes.Code}
-  //   className="size-6"
-  // />,
-  //   title: "Code Block",
-  //   description: "Executes Python code",
-  // },
+  {
+    nodeType: "codeBlock",
+    icon: <WorkflowBlockIcon
+    workflowBlockType={WorkflowBlockTypes.Code}
+    className="size-6"
+  />,
+    title: "Code Block",
+    description: "Executes Python code",
+  },
   {
     nodeType: "fileParser",
     icon: (

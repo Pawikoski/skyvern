@@ -6,6 +6,7 @@ import {
   CursorTextIcon,
   DownloadIcon,
   EnvelopeClosedIcon,
+  GlobeIcon,
   ListBulletIcon,
   LockOpen1Icon,
   StopwatchIcon,
@@ -24,6 +25,9 @@ function WorkflowBlockIcon({ workflowBlockType, className }: Props) {
   switch (workflowBlockType) {
     case "action": {
       return <ClickIcon className={className} />;
+    }
+    case "goto_url": {
+      return <GlobeIcon className={className} />;
     }
     case "code": {
       return <CodeIcon className={className} />;

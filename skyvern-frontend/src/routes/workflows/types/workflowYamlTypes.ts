@@ -71,6 +71,7 @@ export type OutputParameterYAML = ParameterYAMLBase & {
 
 export type BlockYAML =
   | TaskBlockYAML
+  | GoToUrlBlockYAML
   | CodeBlockYAML
   | TextPromptBlockYAML
   | DownloadToS3BlockYAML
@@ -110,6 +111,21 @@ export type TaskBlockYAML = BlockYAMLBase & {
   cache_actions: boolean;
   complete_criterion: string | null;
   terminate_criterion: string | null;
+};
+
+export type GoToUrlBlockYAML = BlockYAMLBase & {
+  block_type: "goto_url";
+  url: string | null;
+  title?: string;
+  error_code_mapping: Record<string, string> | null;
+  max_retries?: number;
+  max_steps_per_run?: number | null;
+  parameter_keys?: Array<string> | null;
+  complete_on_download?: boolean;
+  download_suffix?: string | null;
+  totp_verification_url?: string | null;
+  totp_identifier?: string | null;
+  cache_actions: boolean;
 };
 
 export type ValidationBlockYAML = BlockYAMLBase & {
